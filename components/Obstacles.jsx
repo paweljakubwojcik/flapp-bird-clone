@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components/native'
 import { Dimensions } from 'react-native'
 import { CollisionContext } from '../util/collisions.js'
+import useGameLoop from '../util/hooks/useGameLoop.js'
 
 const deviceDimensions = Dimensions.get('screen')
 const obstacleDimensions = {
@@ -20,12 +21,10 @@ const initialGapHeight = getRandomGapHeight()
 
 export default function Obstacles({ offset }) {
 
-    const { addToCollisionsArray, useCollisions } = useContext(CollisionContext)
+    const { useCollisions } = useContext(CollisionContext)
     const [obstacleRef] = useCollisions()
     const [obstacleRef2] = useCollisions()
-
-    let timerId
-
+    
     const { width, height, gap } = obstacleDimensions
 
     const calculatedOffset = offset * initialPosition + width / 2
@@ -33,23 +32,15 @@ export default function Obstacles({ offset }) {
 
     const [gapHeight, setGapHeight] = useState(initialGapHeight)
 
-    useEffect(() => {
+    useGameLoop(() => {
         if (obstacleLeft > - width) {
-            timerId = setInterval(() => {
-                setObstacleLeft(obstacleLeft => obstacleLeft - 4)
-            }, 30)
-
+            setObstacleLeft(obstacleLeft => obstacleLeft - 4)
         } else {
-            timerId = setInterval(() => {
-                setObstacleLeft(initialPosition)
-                setGapHeight(getRandomGapHeight())
-            }, 30)
-        }
-        return () => {
-            clearInterval(timerId)
-        }
-    }, [obstacleLeft])
 
+            setObstacleLeft(initialPosition)
+            setGapHeight(getRandomGapHeight())
+        }
+    })
 
     return (
         <>
