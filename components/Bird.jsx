@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import styled from 'styled-components/native'
 import { Dimensions } from 'react-native'
-import { CollisionContext } from '../util/collisions.js'
+import useCollisions from '../util/hooks/useCollisions'
 import useGameLoop from '../util/hooks/useGameLoop.js'
 
 const birdDimensions = {
@@ -9,37 +9,35 @@ const birdDimensions = {
     height: 50
 }
 const deviceDimensions = Dimensions.get('screen')
-const gravity = 3
-const jump = 30
+const gravity = 1
+const maxVelocity = 10
+const jumpForce = 12
 
 export default function Bird({ touch, setTouch }) {
 
-    const { useCollisions } = useContext(CollisionContext)
     const [birdRef, checkCollision] = useCollisions(() => {
         stopCallback()
     })
 
     const birdLeft = deviceDimensions.width / 2
     const [birdBottom, setBirdBottom] = useState(deviceDimensions.height / 2)
+    const [velocity, setVelocity] = useState(0)
 
     const { stop } = useGameLoop(() => {
-        if (birdBottom > 0)
-            setBirdBottom(birdBottom => {
-                return birdBottom - gravity
-            })
+        if (birdBottom > 0) {
+            setBirdBottom(birdBottom => birdBottom - velocity)
+            setVelocity(velocity => velocity < maxVelocity ? velocity + gravity : maxVelocity)
+        }
         checkCollision()
-    }, [birdBottom])
+    }, [birdBottom, velocity])
 
     function stopCallback() {
-        console.log('collision')
         stop()
     }
 
     useEffect(() => {
         if (touch) {
-            setBirdBottom(birdBottom => {
-                return birdBottom + jump
-            })
+            setVelocity(-jumpForce)
             setTouch(false)
         }
     }, [touch])
@@ -48,7 +46,8 @@ export default function Bird({ touch, setTouch }) {
         <StyledBird style={{
             bottom: birdBottom,
             left: birdLeft - birdDimensions.width / 2,
-            ...birdDimensions
+            ...birdDimensions,
+            transform: `rotateZ(${(velocity / maxVelocity) * 40}deg)`
         }}
             ref={birdRef}
         />
@@ -59,4 +58,6 @@ const StyledBird = styled.View`
 
     position:absolute;
     background-color: #000;
+    transition: transform .1s;
+    transform-origin: center center
 `

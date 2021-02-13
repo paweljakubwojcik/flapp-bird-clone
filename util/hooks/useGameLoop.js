@@ -1,5 +1,5 @@
 import { useEffect, useContext } from 'react'
-import { GameLoopContext } from '../constext/gameLoop'
+import { GameLoopContext } from '../context/gameLoop'
 
 export default function useGameLoop(callback, dependencyArray) {
 
