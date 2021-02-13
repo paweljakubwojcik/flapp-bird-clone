@@ -1,14 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect, createContext } from 'react'
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { CollisionProvider } from './util/collisions'
+
+import Bird from './components/Bird'
+import Obstacles from './components/Obstacles';
+
 
 export default function App() {
+
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <CollisionProvider>
+        <Bird />
+        <Obstacles />
+        <Obstacles offset={1 / 2} />
+      </CollisionProvider>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -17,5 +26,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden'
   },
-});
+})
