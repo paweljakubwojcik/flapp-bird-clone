@@ -43,12 +43,13 @@ export default function Bird({ touch, setTouch }) {
     }, [touch])
 
     return (
-        <StyledBird style={{
-            bottom: birdBottom,
-            left: birdLeft - birdDimensions.width / 2,
-            ...birdDimensions,
-            transform: `rotateZ(${(velocity / maxVelocity) * 40}deg)`
-        }}
+        <StyledBird
+            style={{
+                bottom: birdBottom,
+                left: birdLeft - birdDimensions.width / 2,
+                ...birdDimensions,
+                transform: `rotateZ(${(velocity / maxVelocity) * 40}deg)`
+            }}
             ref={birdRef}
         />
     )
