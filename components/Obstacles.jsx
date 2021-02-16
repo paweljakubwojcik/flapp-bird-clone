@@ -13,16 +13,18 @@ const obstacleDimensions = {
 const initialPosition = deviceDimensions.width * 1.3
 
 const getRandomGapHeight = () => {
-    console.log('random')
-    return (Math.random() * 0.5 + 0.25) * deviceDimensions.height
+    const value = Math.floor((Math.random() * 0.5 + 0.25) * deviceDimensions.height)
+    console.log('next gap height : ' + value)
+    return value
 }
 
 const initialGapHeight = getRandomGapHeight()
 
-export default function Obstacles({ offset }) {
+export default function Obstacles({ offset = 0 }) {
 
     const [obstacleRef] = useCollisions()
     const [obstacleRef2] = useCollisions()
+    const [gapRef] = useCollisions(null, { key: 'gap', mode: 'start' })
 
     const { width, height, gap } = obstacleDimensions
 
@@ -35,37 +37,56 @@ export default function Obstacles({ offset }) {
         if (obstacleLeft > - width) {
             setObstacleLeft(obstacleLeft => obstacleLeft - 4)
         } else {
-
             setObstacleLeft(initialPosition)
             setGapHeight(getRandomGapHeight())
         }
-    })
+    }, [obstacleLeft])
 
     return (
-        <>
+        <Container style={{
+            left: obstacleLeft,
+            width
+        }}>
             <Obstacle
                 style={{
-                    bottom: 0,
-                    left: obstacleLeft,
                     height: gapHeight,
-                    width
                 }}
                 ref={obstacleRef}
             />
+            <Gap
+                style={{
+                    height: gap
+                }}
+                ref={gapRef}
+            />
             <Obstacle
                 style={{
-                    top: 0,
-                    left: obstacleLeft,
-                    height: height - gapHeight - gap,
-                    width
+                    height: '100px',
                 }}
                 ref={obstacleRef2}
             />
-        </>
+        </Container>
     )
 }
 
-const Obstacle = styled.View`
+const Container = styled.View`
     position:absolute;
+    bottom: 0;
+    height: 100%;
+
+    display:flex;
+    flex-direction: column-reverse;
+    justify-content: stretch;
+
+`
+
+const Obstacle = styled.View`
     background-color: #111;
+    width: 100%;
+    flex-grow: 1;
+`
+
+const Gap = styled.View`
+    background-color: transparent;
+    width: 100%;
 `

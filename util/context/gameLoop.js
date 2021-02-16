@@ -4,7 +4,8 @@ const GameLoopContext = createContext({
     timerIds: [],
     addTimerId: () => { },
     stop: () => { },
-    gameLoop: true
+    start: () => { },
+    gameLoop: false
 })
 
 function GameLoopProvider({ children }) {

@@ -9,10 +9,10 @@ export default function useGameLoop(callback, dependencyArray) {
     let timerId
 
     useEffect(() => {
-        if (gameLoop)
+        if (gameLoop && callback)
             timerId = setInterval(() => {
                 callback()
-            }, 30)
+            }, 33)
 
         return () => {
             clearInterval(timerId)
