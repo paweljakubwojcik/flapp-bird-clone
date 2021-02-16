@@ -9,15 +9,16 @@ const birdDimensions = {
     height: 50
 }
 const deviceDimensions = Dimensions.get('screen')
+const maxBirdBottom = deviceDimensions.height - birdDimensions.height
 const gravity = 1
 const maxVelocity = 10
 const jumpForce = 12
 
-export default ({ touch, setTouch, incrementScore }) => {
+export default ({ touch, setTouch, incrementScore, onGameOver }) => {
 
     const [birdRef, checkCollision] = useCollisions({
         gap: () => incrementScore(),
-        default: () => stop()
+        default: () => handleGameOver()
     }, {
         mode: 'start'
     })
@@ -26,17 +27,14 @@ export default ({ touch, setTouch, incrementScore }) => {
     const [birdBottom, setBirdBottom] = useState(deviceDimensions.height / 1.7)
     const [velocity, setVelocity] = useState(0)
 
-    const { stop, start } = useGameLoop(() => {
-        if (birdBottom > 0) {
-            setBirdBottom(birdBottom => birdBottom - velocity)
-            setVelocity(velocity => velocity < maxVelocity ? velocity + gravity : maxVelocity)
-        }
+    const { stop } = useGameLoop(() => {
+
+        setBirdBottom(birdBottom => (birdBottom < maxBirdBottom && birdBottom > 0) ? birdBottom - velocity : birdBottom)
+        setVelocity(velocity => velocity < maxVelocity ? velocity + gravity : maxVelocity)
+
         checkCollision()
     }, [birdBottom, velocity])
 
-    function stopCallback() {
-        stop()
-    }
 
     useEffect(() => {
         if (touch) {
@@ -44,6 +42,11 @@ export default ({ touch, setTouch, incrementScore }) => {
             setTouch(false)
         }
     }, [touch])
+
+    const handleGameOver = () => {
+        stop()
+        onGameOver()
+    }
 
     return (
         <Bird

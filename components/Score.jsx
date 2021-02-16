@@ -15,6 +15,5 @@ const Score = styled.Text`
     top: 0;
     right:0;
     font-size: 32px;
-
-
+    
 `

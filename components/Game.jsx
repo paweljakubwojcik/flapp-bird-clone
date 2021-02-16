@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 import { TouchableWithoutFeedback } from 'react-native'
 import styled from 'styled-components/native'
 import { CollisionProvider } from '../util/context/collisions'
@@ -8,7 +9,7 @@ import Obstacles from './Obstacles';
 import Score from './Score';
 
 
-export default function Game() {
+export default function Game({ onGameOver }) {
 
     const [touch, setTouch] = useState(false)
 
@@ -26,7 +27,12 @@ export default function Game() {
             <CollisionProvider>
                 <TouchableWithoutFeedback onPress={handlePress}>
                     <Container>
-                        <Bird touch={touch} setTouch={setTouch} incrementScore={incrementScore} />
+                        <Bird
+                            touch={touch}
+                            setTouch={setTouch}
+                            incrementScore={incrementScore}
+                            onGameOver={onGameOver}
+                        />
                         <Obstacles />
                         <Obstacles offset={1 / 2} />
                         <Score score={score} />
@@ -35,6 +41,10 @@ export default function Game() {
             </CollisionProvider>
         </GameLoopProvider>
     )
+}
+
+Game.propTypes = {
+    onGameOver: PropTypes.func
 }
 
 const Container = styled.View`
